@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  service-python:
+    build: ./service-python
+    container_name: service-python
+    ports:
+      - "8001:8001"
+
+  service-node:
+    build: ./service-node
+    container_name: service-node
+    ports:
+      - "8002:8002"
+
+  api-gateway-go:
+    build: ./api-gateway-go
+    container_name: api-gateway-go
+    environment:
+      PY_SERVICE_URL: http://service-python:8001
+      NODE_SERVICE_URL: http://service-node:8002
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-python
+      - service-node
+
