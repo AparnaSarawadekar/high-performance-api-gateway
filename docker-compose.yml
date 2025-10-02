@@ -1,26 +1,64 @@
-version: "3.9"
+# docker-compose.yml
+# Compose v2: no `version:` key needed.
+
 services:
   service-python:
     build: ./service-python
     container_name: service-python
+    environment:
+      - PORT=8001
     ports:
-      - "8001:8001"
+      - "${PY_PORT:-8001}:8001"
+    healthcheck:
+      # python:3.12-slim may not have curl/wget; hence shose to use stdlib via python3
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/healthz', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - hpag-net
 
   service-node:
     build: ./service-node
     container_name: service-node
+    environment:
+      - PORT=8002
     ports:
-      - "8002:8002"
+      - "${NODE_PORT:-8002}:8002"
+    healthcheck:
+      # node:20-alpine has wget by default
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/healthz > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 2s
+      retries: 6
+      start_period: 5s
+    restart: unless-stopped
+    networks:
+      - hpag-net
 
   api-gateway-go:
     build: ./api-gateway-go
     container_name: api-gateway-go
     environment:
+      # Internal DNS names from this Compose file
       PY_SERVICE_URL: http://service-python:8001
       NODE_SERVICE_URL: http://service-node:8002
+      PORT: 8080
     ports:
-      - "8080:8080"
+      - "${GATEWAY_PORT:-8080}:8080"
     depends_on:
-      - service-python
-      - service-node
+      service-python:
+        condition: service_healthy
+      service-node:
+        condition: service_healthy
+    # Note: Since our Go runtime image is distroless,we are skipping a healthcheck here.
+    restart: unless-stopped
+    networks:
+      - hpag-net
+
+networks:
+  hpag-net:
+    driver: bridge
 

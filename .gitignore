@@ -30,3 +30,15 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+
+# Node.js
+service-node/node_modules/
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# Docker
+*.env
+
