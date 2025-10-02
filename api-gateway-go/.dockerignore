@@ -1,0 +1,7 @@
+.git
+**/*.md
+**/tests
+**/.DS_Store
+dist
+bin
+
