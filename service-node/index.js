@@ -23,3 +23,17 @@ app.listen(PORT, () => {
   console.log(`service-node listening on :${PORT}`);
 });
 
+app.post("/infer", (req, res) => {
+  const { prompt } = req.body || {};
+  if (!prompt) return res.status(400).json({ error: "prompt required" });
+
+  const delayMs = 30 + Math.floor(Math.random() * 21); // 30–50ms latency
+  setTimeout(() => {
+    res.json({
+      result: `echo: ${prompt}`,
+      latency_ms: delayMs,
+      model: "node-dummy-v0",
+    });
+  }, delayMs);
+});
+

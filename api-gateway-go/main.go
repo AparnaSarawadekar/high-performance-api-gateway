@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+	"io"
+        "log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -10,96 +11,76 @@ import (
 	"time"
 )
 
-type jsonResponse map[string]any
+// Health response structure
+type healthResponse struct {
+	Ok      bool              `json:"ok"`
+	Service string            `json:"service"`
+	Uptime  int64             `json:"uptime_ms"`
+	Targets map[string]string `json:"targets,omitempty"`
+}
 
-func env(key, def string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
+var startTime = time.Now()
+
+func getenv(key, def string) string {
+	if val := os.Getenv(key); val != "" {
+		return val
 	}
 	return def
 }
 
-func proxyTo(targetBase, overridePath string) *httputil.ReverseProxy {
-	u, err := url.Parse(targetBase)
+func mustParse(raw string) *url.URL {
+	u, err := url.Parse(raw)
 	if err != nil {
-		log.Fatalf("invalid target url %q: %v", targetBase, err)
+		log.Fatalf("invalid URL %q: %v", raw, err)
 	}
-	p := httputil.NewSingleHostReverseProxy(u)
-
-	orig := p.Director
-	p.Director = func(req *http.Request) {
-		orig(req)
-		if overridePath != "" {
-			req.URL.Path = overridePath
-		}
-		// keeping the original query string
-	}
-
-	// adding a simple error handler to return JSON
-	p.ErrorHandler = func(rw http.ResponseWriter, r *http.Request, e error) {
-		rw.Header().Set("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusBadGateway)
-		_ = json.NewEncoder(rw).Encode(jsonResponse{
-			"ok":    false,
-			"error": e.Error(),
-		})
-	}
-	return p
+	return u
 }
 
-func jsonOK(w http.ResponseWriter, payload any) {
-	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(payload)
+// Reverse proxy with path rewrite
+func newPathProxy(base *url.URL, backendPath string) http.HandlerFunc {
+	rp := httputil.NewSingleHostReverseProxy(base)
+	orig := rp.Director
+	rp.Director = func(r *http.Request) {
+		orig(r)
+		r.URL.Path = backendPath
+		r.URL.RawPath = backendPath
+		r.Host = base.Host
+	}
+	return rp.ServeHTTP
 }
 
 func main() {
-	// default URLs match docker-compose service names/ports
-	pyURL := env("PY_SERVICE_URL", "http://service-python:8001")
-	nodeURL := env("NODE_SERVICE_URL", "http://service-node:8002")
+	pyBase := mustParse(getenv("PY_SERVICE_URL", "http://service-python:8001"))
+	nodeBase := mustParse(getenv("NODE_SERVICE_URL", "http://service-node:8002"))
+	port := getenv("PORT", "8080")
 
 	mux := http.NewServeMux()
 
-	// health
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		jsonOK(w, jsonResponse{"ok": true, "service": "api-gateway-go"})
+	// Health endpoint
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(healthResponse{
+			Ok:      true,
+			Service: "api-gateway-go",
+			Uptime:  time.Since(startTime).Milliseconds(),
+			Targets: map[string]string{
+				"python": pyBase.String(),
+				"node":   nodeBase.String(),
+			},
+		})
 	})
 
-	// route: /infer  -> python service /infer
-	pyProxy := proxyTo(pyURL, "/infer")
-	mux.Handle("/infer", pyProxy)
+	// Inference routes
+	mux.HandleFunc("/infer/python", newPathProxy(pyBase, "/infer"))
+	mux.HandleFunc("/infer/node", newPathProxy(nodeBase, "/infer"))
 
-	// (placeholder) route: /metrics -> node service /metrics
-	nodeProxy := proxyTo(nodeURL, "/metrics")
-	mux.Handle("/metrics", nodeProxy)
+	// Fallback root
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		io.WriteString(w, "API Gateway MVP: use /healthz, /infer/python, /infer/node\n")
+	})
 
-	srv := &http.Server{
-		Addr:              ":8080",
-		Handler:           logging(mux),
-		ReadHeaderTimeout: 5 * time.Second,
+	log.Printf("Gateway listening on %s", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
+		log.Fatal(err)
 	}
-
-	log.Println("api-gateway-go listening on :8080")
-	log.Fatal(srv.ListenAndServe())
 }
-
-// simple JSON access log
-func logging(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		ww := &wrap{ResponseWriter: w, status: 200}
-		next.ServeHTTP(ww, r)
-		log.Printf(`{"ts":"%s","method":"%s","path":"%s","status":%d,"dur_ms":%d}`,
-			time.Now().Format(time.RFC3339), r.Method, r.URL.Path, ww.status, time.Since(start).Milliseconds())
-	})
-}
-
-type wrap struct {
-	http.ResponseWriter
-	status int
-}
-
-func (w *wrap) WriteHeader(code int) {
-	w.status = code
-	w.ResponseWriter.WriteHeader(code)
-}
-
