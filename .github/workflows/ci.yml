@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches: [ "main" ]
@@ -8,7 +9,6 @@ on:
 
 permissions:
   contents: read
-
 
 jobs:
   go:
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.25'
+          go-version: "1.25"
           check-latest: true
           cache: true
       - name: Vet & Build
@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
       - name: Install deps + lint tools
         run: |
           python -m pip install --upgrade pip
@@ -68,8 +68,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: service-node/package-lock.json
       - name: Install
         run: npm ci --no-audit --omit=optional
@@ -108,24 +108,34 @@ jobs:
     needs: docker-build
     steps:
       - uses: actions/checkout@v4
+
       - name: Compose up (build again if needed)
         run: docker compose up -d --build
+
       - name: Wait for gateway health
+        shell: bash
         run: |
           for i in {1..30}; do
-            curl -fsS http://localhost:8080/healthz && break
+            if curl -fsS http://localhost:8080/healthz >/dev/null; then
+              exit 0
+            fi
             sleep 2
           done
+          echo "Gateway did not become healthy in time."
+          exit 1
+
       - name: Smoke: infer -> python
         run: |
           curl -fsS -X POST http://localhost:8080/infer/python \
             -H "Content-Type: application/json" \
             -d '{"prompt":"hello"}'
+
       - name: Smoke: infer -> node
         run: |
           curl -fsS -X POST http://localhost:8080/infer/node \
             -H "Content-Type: application/json" \
             -d '{"prompt":"hello"}'
+
       - name: Compose down
         if: always()
         run: docker compose down -v
