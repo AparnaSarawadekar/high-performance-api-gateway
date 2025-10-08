@@ -1,11 +1,135 @@
-name: CI-Min
+name: CI
+
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  noop:
+  go:
+    name: Go (gateway)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api-gateway-go
     steps:
-      - name: say hi
-        run: echo "workflow parser is happy"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          check-latest: true
+          cache: true
+      - name: Vet & Build
+        run: |
+          go mod tidy
+          go vet ./...
+          go build -v ./...
+      - name: Unit tests
+        run: go test -v ./...
+
+  python:
+    name: Python (service)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: service-python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps + lint tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt ruff pytest
+      - name: Ruff lint
+        run: ruff check .
+      - name: Unit tests (if present)
+        shell: bash
+        run: |
+          if compgen -G "tests/**/*.py" > /dev/null; then
+            pytest -q
+          else
+            echo "No tests found — skipping."
+          fi
+
+  node:
+    name: Node (service)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: service-node
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: service-node/package-lock.json
+      - name: Install
+        run: npm ci --no-audit --omit=optional
+      - name: Lint
+        run: npm run lint
+
+  docker-build:
+    name: Docker build (all services)
+    runs-on: ubuntu-latest
+    needs: [go, python, node]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build gateway (Go)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api-gateway-go
+          tags: hpag/api-gateway-go:ci
+          load: true
+      - name: Build service-node
+        uses: docker/build-push-action@v6
+        with:
+          context: ./service-node
+          tags: hpag/service-node:ci
+          load: true
+      - name: Build service-python
+        uses: docker/build-push-action@v6
+        with:
+          context: ./service-python
+          tags: hpag/service-python:ci
+          load: true
+
+  compose-smoke:
+    name: docker-compose smoke test
+    runs-on: ubuntu-latest
+    needs: docker-build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compose up (build again if needed)
+        run: docker compose up -d --build
+
+      - name: Wait for gateway health
+        shell: bash
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8080/healthz >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Gateway did not become healthy in time."
+          exit 1
+
+      - name: Smoke: infer -> python
+        run: curl -fsS -X POST http://localhost:8080/infer/python -H "Content-Type: application/json" -d '{"prompt":"hello"}'
+
+      - name: Smoke: infer -> node
+        run: curl -fsS -X POST http://localhost:8080/infer/node -H "Content-Type: application/json" -d '{"prompt":"hello"}'
+
+      - name: Compose down
+        if: ${{ always() }}
+        run: docker compose down -v
