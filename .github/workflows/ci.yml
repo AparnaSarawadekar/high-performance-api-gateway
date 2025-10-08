@@ -70,18 +70,9 @@ jobs:
     needs: [go, python, node]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Compose validate
-        run: docker compose config
-
-      - name: Build gateway (api-gateway-go)
-        run: docker compose build --progress=plain api-gateway-go
-
-      - name: Build python service
-        run: docker compose build --progress=plain service-python
-
-      - name: Build node service
-        run: docker compose build --progress=plain service-node
+      - name: Build all Docker images
+        run: |
+          docker compose build
 
   smoke:
     name: Docker Compose Smoke Test
@@ -93,7 +84,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           docker compose up -d --build
           echo "Waiting for gateway on :8080 ..."
           for i in {1..90}; do
@@ -103,7 +93,6 @@ jobs:
             fi
             sleep 1
           done
-
           if ! curl -f http://localhost:8080/healthz; then
             echo "Gateway not healthy. Diagnostics:"
             docker compose ps
@@ -116,6 +105,5 @@ jobs:
             docker compose down -v || true
             exit 1
           fi
-
           docker compose down -v
 
