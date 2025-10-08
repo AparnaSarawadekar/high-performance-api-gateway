@@ -1,6 +1,6 @@
 {
-"env": { "node": true, "es2021": true },
-"extends": ["eslint:recommended"],
-"parserOptions": { "ecmaVersion": 2021, "sourceType": "script" },
-"rules": {}
+  "env": { "node": true, "es2022": true },
+  "extends": ["eslint:recommended"],
+  "parserOptions": { "ecmaVersion": "latest", "sourceType": "module" },
+  "rules": { "no-console": "off" }
 }
