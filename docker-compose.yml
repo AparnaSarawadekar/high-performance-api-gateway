@@ -42,7 +42,6 @@ services:
     build: ./api-gateway-go
     container_name: api-gateway-go
     environment:
-      # Internal DNS names from this Compose file
       PY_SERVICE_URL: http://service-python:8001
       NODE_SERVICE_URL: http://service-node:8002
       PORT: 8080
@@ -53,12 +52,7 @@ services:
         condition: service_started
       service-node:
         condition: service_started
-    # Note: Since our Go runtime image is distroless,we are skipping a healthcheck here.
     restart: unless-stopped
     networks:
       - hpag-net
-
-networks:
-  hpag-net:
-    driver: bridge
 
