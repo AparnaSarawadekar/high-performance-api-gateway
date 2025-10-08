@@ -26,8 +26,6 @@
 | **service-python** | FastAPI 3.12 | Simulated AI inference backend |
 | **service-node** | Express 20.x | Fallback inference/test backend |
 
-*(Optional diagram placeholder: `docs/img/architecture.png`)*
-
 ---
 
 ## 🐳 Local Development with Docker Compose
@@ -99,9 +97,9 @@ Automated testing & builds run via
 |:--|:--|:--|
 | **Go (Gateway)** | Go 1.25 | `go vet`, `go build`, `go test` |
 | **Python (Service)** | Python 3.12 | `pip install`, `ruff check`, `pytest` |
-| **Node (Service)** | Node 20.x | `npm ci`, `eslint .` |
-| **Docker Builds** | — | Build images for all services |
-| **Compose Smoke Test** | — | Bring up stack, check `/healthz`, POST to `/infer/python` and `/infer/node`, then teardown |
+| **Node (Service)** | Node 20 | `npm ci`, `eslint .` |
+| **Docker Builds** | Docker 25 + Buildx | Build images for all services |
+| **Compose Smoke Test** | Docker Compose V2 | Bring up stack, check `/healthz`, POST to `/infer/python` and `/infer/node`, then teardown |
 
 ### Run the Same Checks Locally
 ```bash
