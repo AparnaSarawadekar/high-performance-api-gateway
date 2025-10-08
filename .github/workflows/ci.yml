@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -125,6 +126,11 @@ jobs:
           exit 1
 
       - name: Smoke: infer -> python
+        run: |
+          curl -fsS -X POST http://localhost:8080/infer/python \
+            -H "Content-Type: application/json" \
+            -d '{"prompt":"hello"}'
+
       - name: Smoke: infer -> node
         run: |
           curl -fsS -X POST http://localhost:8080/infer/node \
