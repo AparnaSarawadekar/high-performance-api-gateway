@@ -50,9 +50,9 @@ services:
       - "${GATEWAY_PORT:-8080}:8080"
     depends_on:
       service-python:
-        condition: service_healthy
+        condition: service_started
       service-node:
-        condition: service_healthy
+        condition: service_started
     # Note: Since our Go runtime image is distroless,we are skipping a healthcheck here.
     restart: unless-stopped
     networks:
