@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,6 @@ jobs:
         with:
           go-version: "1.23"
           check-latest: true
-          cache: false
       - name: Build & Test
         run: |
           go mod tidy
@@ -85,25 +84,18 @@ jobs:
         run: |
           set -euo pipefail
           docker compose up -d --build
-          echo "Waiting for gateway on :8080 ..."
-          for i in {1..90}; do
+          for i in {1..45}; do
             if curl -fsS http://localhost:8080/healthz >/dev/null; then
               echo "Gateway healthy"
               break
             fi
-            sleep 1
+            echo "Waiting for gateway... ($i)"
+            sleep 2
           done
           if ! curl -f http://localhost:8080/healthz; then
             echo "Gateway not healthy. Diagnostics:"
             docker compose ps
-            echo "---- gateway logs ----"
             docker compose logs --no-color api-gateway-go || true
-            echo "---- python logs ----"
-            docker compose logs --no-color service-python || true
-            echo "---- node logs ----"
-            docker compose logs --no-color service-node || true
-            docker compose down -v || true
             exit 1
           fi
           docker compose down -v
-
