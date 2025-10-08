@@ -11,7 +11,7 @@ RUN go mod download
 # copy sources and build
 COPY . .
 ENV CGO_ENABLED=0
-RUN GOOS=linux GOARCH=arm64 go build -o server
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o server
 
 # tiny runtime image
 FROM gcr.io/distroless/static:nonroot

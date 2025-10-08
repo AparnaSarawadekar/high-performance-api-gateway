@@ -103,13 +103,13 @@ jobs:
           echo "Waiting for gateway to become healthy..."
           for i in {1..90}; do
             if curl -fsS http://localhost:8080/healthz >/dev/null; then
-              echo "✅ Gateway healthy"
+              echo "Gateway healthy"
               break
             fi
             sleep 1
           done
           if ! curl -f http://localhost:8080/healthz; then
-            echo "❌ Gateway not healthy, showing diagnostics:"
+            echo "Gateway not healthy, showing diagnostics:"
             docker compose ps
             docker compose logs --no-color
             docker compose down -v || true
