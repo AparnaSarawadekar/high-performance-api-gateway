@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -23,6 +23,7 @@ jobs:
         with:
           go-version: "1.23"
           check-latest: true
+          cache: false
       - name: Build & Test
         run: |
           go mod tidy
@@ -69,9 +70,31 @@ jobs:
     needs: [go, python, node]
     steps:
       - uses: actions/checkout@v4
-      - name: Build all Docker images
+
+      - name: Show compose and tree
+        shell: bash
         run: |
-          docker compose build
+          set -euo pipefail
+          docker --version
+          docker compose version
+          echo "--- compose config ---"
+          docker compose config
+          echo "--- repo tree (top level) ---"
+          ls -la
+          echo "--- check Dockerfiles exist ---"
+          test -f api-gateway-go/Dockerfile || { echo "missing: api-gateway-go/Dockerfile"; exit 1; }
+          test -f service-python/Dockerfile || { echo "missing: service-python/Dockerfile"; exit 1; }
+          test -f service-node/Dockerfile || { echo "missing: service-node/Dockerfile"; exit 1; }
+          echo "All Dockerfiles present."
+
+      - name: Build gateway (api-gateway-go)
+        run: docker compose build --progress=plain api-gateway-go
+
+      - name: Build python service
+        run: docker compose build --progress=plain service-python
+
+      - name: Build node service
+        run: docker compose build --progress=plain service-node
 
   smoke:
     name: Docker Compose Smoke Test
@@ -84,18 +107,23 @@ jobs:
         run: |
           set -euo pipefail
           docker compose up -d --build
-          for i in {1..45}; do
+          for i in {1..90}; do
             if curl -fsS http://localhost:8080/healthz >/dev/null; then
               echo "Gateway healthy"
               break
             fi
-            echo "Waiting for gateway... ($i)"
-            sleep 2
+            sleep 1
           done
           if ! curl -f http://localhost:8080/healthz; then
             echo "Gateway not healthy. Diagnostics:"
             docker compose ps
+            echo "---- gateway logs ----"
             docker compose logs --no-color api-gateway-go || true
+            echo "---- python logs ----"
+            docker compose logs --no-color service-python || true
+            echo "---- node logs ----"
+            docker compose logs --no-color service-node || true
+            docker compose down -v || true
             exit 1
           fi
           docker compose down -v
