@@ -138,5 +138,5 @@ jobs:
             -d '{"prompt":"hello"}'
 
       - name: Compose down
-     if: ${{ always() }}
-     run: docker compose down -v
+        if: ${{ always() }}
+        run: docker compose down -v
