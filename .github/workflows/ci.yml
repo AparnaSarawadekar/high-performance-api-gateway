@@ -70,8 +70,18 @@ jobs:
     needs: [go, python, node]
     steps:
       - uses: actions/checkout@v4
-      - name: Build all Docker images
-        run: docker compose build
+
+      - name: Compose validate
+        run: docker compose config
+
+      - name: Build gateway (api-gateway-go)
+        run: docker compose build --progress=plain api-gateway-go
+
+      - name: Build python service
+        run: docker compose build --progress=plain service-python
+
+      - name: Build node service
+        run: docker compose build --progress=plain service-node
 
   smoke:
     name: Docker Compose Smoke Test
