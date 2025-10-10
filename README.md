@@ -162,8 +162,156 @@ docker compose down -v
 | 6 | Wire up docker-compose (local orchestration) | ✅ |
 | 7 | Implement gateway MVP (routing + health) | ✅ |
 | 8 | Add GitHub Actions CI (pipeline) | ✅ |
+| 9 | Baseline Load Test (k6) | ✅ |
 
-Next → **Step 9 : Baseline Load Test (k6)**
+---
+
+## ⚡ Step 9 — Baseline Load Test with k6
+
+This step benchmarks the **current performance** of the gateway stack before adding caching, throttling, or Redis.  
+We’ll measure **RPS, p95/p99 latency, and error rates** to establish a baseline.
+
+---
+
+### 🧪 Test Script
+
+File: `tests/load/k6_baseline.js`
+
+```js
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+const BASE = __ENV.BASE_URL || 'http://localhost:8080';
+const PAYLOAD = JSON.stringify({ prompt: 'hello world' });
+const HEADERS = { 'Content-Type': 'application/json' };
+
+export const options = {
+  scenarios: {
+    warmup: {
+      executor: 'constant-arrival-rate',
+      rate: 50,               
+      timeUnit: '1s',
+      duration: '30s',
+      preAllocatedVUs: 50,
+      maxVUs: 100,
+      startTime: '0s',
+    },
+    baseline: {
+      executor: 'constant-arrival-rate',
+      rate: 150,              
+      timeUnit: '1s',
+      duration: '2m',
+      preAllocatedVUs: 200,
+      maxVUs: 300,
+      startTime: '30s',
+    },
+  },
+  thresholds: {
+    http_req_failed: ['rate<0.001'],      
+    http_req_duration: ['p(95)<200', 'p(99)<400'],
+  },
+  tags: { test_stage: 'baseline' },
+};
+
+export default function () {
+  const res = http.post(`${BASE}/infer/python`, PAYLOAD, { headers: HEADERS });
+  check(res, { 'status 200': (r) => r.status === 200 });
+  sleep(0.05);
+}
+```
+
+---
+
+### ▶️ Run the Baseline Test
+
+From the repo root:
+
+```bash
+# 1️⃣ Ensure stack is up
+docker compose up -d --build
+curl -s http://localhost:8080/healthz
+
+# 2️⃣ Run k6 test
+k6 run --summary-export=tests/load/baseline_summary.json tests/load/k6_baseline.js
+```
+
+You’ll see live results in the terminal, and a JSON summary will be saved to  
+`tests/load/baseline_summary.json`.
+
+---
+
+### 📊 Generate Markdown Summary
+
+File: `tools/k6_summary_to_md.py`
+
+```python
+import json, datetime, pathlib
+
+src = pathlib.Path("tests/load/baseline_summary.json")
+dst = pathlib.Path("docs/Perf_Baseline.md")
+
+data = json.loads(src.read_text())
+m = data.get("metrics", {})
+def get(mkey, vkey): return m.get(mkey, {}).get("values", {}).get(vkey, 0)
+
+rps = get("http_reqs","rate")
+p95 = get("http_req_duration","p(95)")
+errors = get("http_req_failed","rate") * 100
+count = get("http_reqs","count")
+
+md = f"""# Baseline Performance (k6)
+
+**Date:** {datetime.datetime.now():%Y-%m-%d %H:%M}  
+**Script:** `tests/load/k6_baseline.js`
+
+| Metric | Value |
+|--|--:|
+| Requests | {int(count):,} |
+| Throughput (RPS) | {rps:.1f} |
+| p95 Latency (ms) | {p95:.1f} |
+| Error Rate (%) | {errors:.3f}% |
+
+Targets:
+- Throughput ≥150 RPS
+- p95 ≤ 200 ms
+- Error < 0.1 %
+
+> This report was generated automatically from the k6 JSON summary.
+"""
+
+dst.write_text(md)
+print(f"Wrote {dst}")
+```
+
+Run it:
+
+```bash
+python3 tools/k6_summary_to_md.py
+```
+
+A new file `docs/Perf_Baseline.md` will appear containing a Markdown report.
+
+---
+
+### 💾 Commit Artifacts
+
+```bash
+git add tests/load/k6_baseline.js tests/load/baseline_summary.json tools/k6_summary_to_md.py docs/Perf_Baseline.md
+git commit -m "step9: add k6 baseline test + summary report"
+git push origin main
+```
+
+---
+
+### ✅ Expected Outcome
+
+After Step 9, you’ll have:
+- A reproducible **load test** (`k6_baseline.js`)
+- A **JSON metrics file**
+- A readable **Markdown performance report**
+- Documented baseline targets before optimization
+
+Next → **Step 10 — Add rate limiting & throttling in gateway (token bucket)**
 
 ---
 
