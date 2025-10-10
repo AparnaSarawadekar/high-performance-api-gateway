@@ -40,6 +40,15 @@ services:
       PY_SERVICE_URL: http://service-python:8001
       NODE_SERVICE_URL: http://service-node:8002
       PORT: 8080
+      RATE_LIMIT_ENABLED: "true"  # toggle limiter on/off
+      # Global limiter (whole gateway)
+      GLOBAL_RPS: "200"           # tokens added per second
+      GLOBAL_BURST: "100"         # bucket capacity for short bursts
+      # Per-client limiter (by client IP / X-Forwarded-For)
+      CLIENT_RPS: "20"
+      CLIENT_BURST: "40"
+      # Cleanup idle client buckets (minutes)
+      RL_CLEANUP_MINUTES: "10"
     ports:
       - "${GATEWAY_PORT:-8080}:8080"
     depends_on:

@@ -157,30 +157,14 @@ docker compose down -v
 
 ---
 
-## 🧾 Progress Summary (Completed Steps 1 – 8)
-
-| Step | Description | Status |
-|:--:|:--|:--:|
-| 1 | Define scope & success metrics | ✅ |
-| 2 | Set up local tooling (Docker, Kind, k6) | ✅ |
-| 3 | Create GitHub repo + project board | ✅ |
-| 4 | Scaffold services (Go + Python + Node) | ✅ |
-| 5 | Add Dockerfiles for all services | ✅ |
-| 6 | Wire up docker-compose (local orchestration) | ✅ |
-| 7 | Implement gateway MVP (routing + health) | ✅ |
-| 8 | Add GitHub Actions CI (pipeline) | ✅ |
-| 9 | Baseline Load Test (k6) | ✅ |
-
----
-
-## ⚡ Step 9 — Baseline Load Test with k6
+## Step 9 — Baseline Load Test with k6
 
 This step benchmarks the **current performance** of the gateway stack before adding caching, throttling, or Redis.  
 We’ll measure **RPS, p95/p99 latency, and error rates** to establish a baseline.
 
 ---
 
-### 🧪 Test Script
+### Test Script
 
 File: `tests/load/k6_baseline.js`
 
@@ -229,16 +213,16 @@ export default function () {
 
 ---
 
-### ▶️ Run the Baseline Test
+### Run the Baseline Test
 
 From the repo root:
 
 ```bash
-# 1️⃣ Ensure stack is up
+# Ensure stack is up
 docker compose up -d --build
 curl -s http://localhost:8080/healthz
 
-# 2️⃣ Run k6 test
+# Run k6 test
 k6 run --summary-export=tests/load/baseline_summary.json tests/load/k6_baseline.js
 ```
 
@@ -247,7 +231,7 @@ You’ll see live results in the terminal, and a JSON summary will be saved to
 
 ---
 
-### 📊 Generate Markdown Summary
+### Generate Markdown Summary
 
 File: `tools/k6_summary_to_md.py`
 
@@ -329,7 +313,93 @@ After Step 9, you’ll have:
 
 _Source: [`tests/load/baseline_console.txt`](tests/load/baseline_console.txt). Tag: `perf-baseline-v0`._
 
-Next → **Step 10 — Add rate limiting & throttling in gateway (token bucket)**
+---
+
+## Step 10 — Add Rate Limiting & Throttling (Token Bucket)
+
+This step adds configurable rate limiting to the Go API Gateway to protect backends and simulate realistic production traffic control.
+
+### Goal
+Implement **token-bucket-based throttling** with both global and per-client (IP-based) limits to ensure fair usage and prevent backend overloads.
+
+---
+
+### 🔧 Implementation Details
+
+- Added Go middleware (`internal/ratelimit/`) implementing the **token-bucket algorithm**.
+- Supports **global** and **per-client** buckets (identified via `X-Forwarded-For` or client IP).
+- Exposes `429 Too Many Requests` responses with:
+  - `Retry-After`
+  - `RateLimit-Remaining`
+  - `RateLimit-Scope` headers.
+- `/healthz` endpoint bypasses throttling (to avoid health probe failures).
+- All parameters are fully configurable via environment variables in `docker-compose.yml`.
+
+```yaml
+  RATE_LIMIT_ENABLED: "true"
+  GLOBAL_RPS: "200"        # global refill rate (tokens per second)
+  GLOBAL_BURST: "100"      # global bucket capacity
+  CLIENT_RPS: "20"         # per-client refill rate
+  CLIENT_BURST: "40"       # per-client bucket capacity
+  RL_CLEANUP_MINUTES: "10" # cleanup idle client buckets
+
+  ---
+
+### Validation
+
+#### Manual Burst Test
+```bash
+jot 200 | xargs -n1 -P20 -I{} curl -s -o /dev/null -w "%{http_code}\n" \
+http://localhost:8080/limited | sort | uniq -c
+```
+Expect a mix of `200` and `429` responses — confirming throttling is active ✅
+
+#### Automated Load Test (k6)
+```bash
+k6 run tests/load/rate_limit_test.js
+```
+
+Example output:
+```
+checks{type:got429} rate = 99%
+http_req_duration p95 ≈ 10 ms
+```
+
+---
+
+### Outcome
+
+| Feature | Description | Status |
+|:--|:--|:--:|
+| Global Token Bucket | Limits overall gateway RPS | ✅ |
+| Per-Client Bucket | Fair usage for each IP | ✅ |
+| Configurable via Env Vars | Fully tunable via docker-compose | ✅ |
+| Headers Exposed | `Retry-After`, `RateLimit-*` | ✅ |
+| Load-Tested | Manual + k6 verification | ✅ |
+
+**Step 10 complete** — Rate limiting active, configurable, and verified under load.
+
+![Step 10 Complete](https://img.shields.io/badge/Step_10_Rate_Limiting-Passed-brightgreen)
+
+---
+
+## 🧾 Progress Summary (Completed Steps 1 – 8)
+
+| Step | Description | Status |
+|:--:|:--|:--:|
+| 1 | Define scope & success metrics | ✅ |
+| 2 | Set up local tooling (Docker, Kind, k6) | ✅ |
+| 3 | Create GitHub repo + project board | ✅ |
+| 4 | Scaffold services (Go + Python + Node) | ✅ |
+| 5 | Add Dockerfiles for all services | ✅ |
+| 6 | Wire up docker-compose (local orchestration) | ✅ |
+| 7 | Implement gateway MVP (routing + health) | ✅ |
+| 8 | Add GitHub Actions CI (pipeline) | ✅ |
+| 9 | Baseline Load Test (k6) | ✅ |
+
+---
+
+Next → **Step 11 — Add in-memory caching (idempotent GETs + TTL)**
 
 ---
 

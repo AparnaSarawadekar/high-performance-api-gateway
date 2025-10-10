@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"io"
-        "log"
+    "log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"time"
+	"github.com/AparnaSarawadekar/high-performance-api-gateway/api-gateway-go/internal/ratelimit"
 )
 
 // Health response structure
@@ -59,7 +60,7 @@ func main() {
 	// Health endpoint
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(healthResponse{
+		_ = json.NewEncoder(w).Encode(healthResponse{
 			Ok:      true,
 			Service: "api-gateway-go",
 			Uptime:  time.Since(startTime).Milliseconds(),
@@ -70,17 +71,29 @@ func main() {
 		})
 	})
 
-	// Inference routes
+	mux.HandleFunc("/limited", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	})
+
+	// Inference routes (these WILL be limited)
 	mux.HandleFunc("/infer/python", newPathProxy(pyBase, "/infer"))
 	mux.HandleFunc("/infer/node", newPathProxy(nodeBase, "/infer"))
 
 	// Fallback root
 	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		io.WriteString(w, "API Gateway MVP: use /healthz, /infer/python, /infer/node\n")
+		_, _ = io.WriteString(w, "API Gateway MVP: use /healthz, /limited, /infer/python, /infer/node\n")
 	})
 
+	// ---- Rate limiter wiring (global + per-client) ----
+	rl := ratelimit.NewManagerFromEnv()
+	handler := rl.Middleware(mux)
+	// ---------------------------------------------------
+
+	addr := ":" + port
 	log.Printf("Gateway listening on %s", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
+	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatal(err)
 	}
 }
