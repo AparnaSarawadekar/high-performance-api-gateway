@@ -1,13 +1,13 @@
 [![CI](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml)
 
-# 🚀 High-Performance API Gateway for AI Workloads
+# High-Performance API Gateway for AI Workloads
 *Go | Python | Node.js | Docker | Kubernetes | Azure*
 
 > A distributed API gateway prototype optimized for **AI inference traffic** — demonstrating scalable routing, caching, throttling, and observability patterns.
 
 ---
 
-## 🎯 Performance Targets
+## Performance Targets
 
 | Metric | Baseline Goal | Optimized Goal | Description |
 |:--|:--:|:--:|:--|
@@ -18,7 +18,7 @@
 
 ---
 
-## 🧱 Architecture Overview
+## Architecture Overview
 
 | Component | Language | Purpose |
 |:--|:--|:--|
@@ -28,7 +28,7 @@
 
 ---
 
-## 🐳 Local Development with Docker Compose
+## Local Development with Docker Compose
 
 ### Prerequisites
 - Docker Desktop (or Docker Engine + Compose v2)
@@ -53,7 +53,7 @@ Expected:
 
 ---
 
-## 🧩 Gateway MVP — Step 7 (Routing + Health Checks)
+## Gateway MVP — Step 7 (Routing + Health Checks)
 
 The **Go API Gateway** exposes health info and proxies inference requests to both backend services.
 
@@ -86,7 +86,7 @@ docker compose down -v
 
 ---
 
-## ⚙️ Continuous Integration — Step 8
+## Continuous Integration — Step 8
 
 Automated testing & builds run via  
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
@@ -125,13 +125,14 @@ docker compose down -v
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 ```
 .
 ├── api-gateway-go/        # Go gateway
 │   ├── main.go
 │   ├── Dockerfile
-│   └── main_test.go
+│   ├── main_test.go
+│   └── go.mod
 ├── service-python/        # FastAPI service
 │   ├── app.py
 │   ├── Dockerfile
@@ -139,10 +140,16 @@ docker compose down -v
 ├── service-node/          # Express service
 │   ├── index.js
 │   ├── Dockerfile
+│   ├── .eslintrc.json
+│   ├── package-lock.json
 │   └── package.json
 ├── tests/
 │   └── load/              # k6 scripts (baseline & perf)
 ├── docs/                  # Setup, containerization, metrics
+│   ├── Containerization.md
+│   ├── Local-Tooling-Status.md
+│   ├── Perf_Baseline.md
+│   └── Scope-and-Metrics.md
 ├── docker-compose.yml
 ├── Makefile
 └── .github/workflows/ci.yml
@@ -293,7 +300,7 @@ A new file `docs/Perf_Baseline.md` will appear containing a Markdown report.
 
 ---
 
-### 💾 Commit Artifacts
+### Commit Artifacts
 
 ```bash
 git add tests/load/k6_baseline.js tests/load/baseline_summary.json tools/k6_summary_to_md.py docs/Perf_Baseline.md
@@ -303,13 +310,24 @@ git push origin main
 
 ---
 
-### ✅ Expected Outcome
+### Expected Outcome
 
 After Step 9, you’ll have:
 - A reproducible **load test** (`k6_baseline.js`)
 - A **JSON metrics file**
 - A readable **Markdown performance report**
 - Documented baseline targets before optimization
+
+### Step 9 Baseline Snapshot
+
+| Metric | Value |
+|:--|--:|
+| RPS | ~1950 |
+| p95 (ms) | ~1.92 |
+| p99 (ms) | ~2.60 |
+| Error Rate | 0.00% |
+
+_Source: [`tests/load/baseline_console.txt`](tests/load/baseline_console.txt). Tag: `perf-baseline-v0`._
 
 Next → **Step 10 — Add rate limiting & throttling in gateway (token bucket)**
 
