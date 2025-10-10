@@ -1,7 +1,8 @@
 [![CI](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml)
 
 # High-Performance API Gateway for AI Workloads
-*Go | Python | Node.js | Docker | Kubernetes | Azure*
+*Go | Python | Node.js | Docker | Kubernetes | Azure*git status
+
 
 > A distributed API gateway prototype optimized for **AI inference traffic** — demonstrating scalable routing, caching, throttling, and observability patterns.
 
