@@ -1,0 +1,25 @@
+{
+  "generated_at": "2025-10-15T14:23:33.715141Z",
+  "baseline": {
+    "rps": 708.9084566072981,
+    "p50_ms": null,
+    "p95_ms": null,
+    "p99_ms": null,
+    "error_rate_pct": 0.0,
+    "total_requests": 14208
+  },
+  "cached": {
+    "rps": 708.9808162476626,
+    "p50_ms": null,
+    "p95_ms": null,
+    "p99_ms": null,
+    "error_rate_pct": 0.0,
+    "total_requests": 14207
+  },
+  "delta_pct": {
+    "rps": 0.010207191025865972,
+    "p95_ms": null,
+    "p99_ms": null,
+    "error_rate_pct": null
+  }
+}

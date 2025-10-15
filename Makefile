@@ -34,3 +34,20 @@ smoke:
 clean:
 	docker compose -f $(COMPOSE_FILE) down -v --remove-orphans
 
+perf:baseline:
+	@echo "Running baseline (40 VUs, 20s)…"
+	K6_SUMMARY_OUT=tests/load/perf_baseline_summary.json \
+	k6 run --vus 40 --duration 20s tests/load/cache_test.js | tee tests/load/baseline_console.txt
+
+perf:cached:
+	@echo "Warming cache…"
+	curl -sS http://localhost:8080/slow >/dev/null || true
+	curl -sS http://localhost:8080/slow >/dev/null || true
+	@echo "Running cached (40 VUs, 20s)…"
+	K6_SUMMARY_OUT=tests/load/perf_cached_summary.json \
+	k6 run --vus 40 --duration 20s tests/load/cache_test.js | tee tests/load/perf_cached_console.txt
+
+perf:report:
+	python3 scripts/perf_report.py
+
+perf:all: perf:baseline perf:cached perf:report

@@ -1,0 +1,5 @@
+metric,baseline,cached,delta_pct
+rps,708.91,708.98,0.0%
+p95_ms,n/a,n/a,n/a
+p99_ms,n/a,n/a,n/a
+error_rate_pct,0.00,0.00,n/a
