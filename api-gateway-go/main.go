@@ -3,12 +3,14 @@ package main
 import (
 	"encoding/json"
 	"io"
-    "log"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/AparnaSarawadekar/high-performance-api-gateway/api-gateway-go/internal/cache"
 	"github.com/AparnaSarawadekar/high-performance-api-gateway/api-gateway-go/internal/ratelimit"
 )
 
@@ -57,7 +59,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Health endpoint
+	// Health endpoint (bypassed by cache & limiter)
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(healthResponse{
@@ -71,25 +73,35 @@ func main() {
 		})
 	})
 
+	// Limited echo endpoint (used in Step 10 verification)
 	mux.HandleFunc("/limited", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"ok":true}`))
 	})
 
-	// Inference routes (these WILL be limited)
+	// Simple GET endpoint to demo caching (idempotent)
+	mux.HandleFunc("/slow", func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(120 * time.Millisecond) // simulate work
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"ok":true,"path":"/slow"}`))
+	})
+
+	// Inference routes (rate-limited; cacheable later if you add GETs)
 	mux.HandleFunc("/infer/python", newPathProxy(pyBase, "/infer"))
 	mux.HandleFunc("/infer/node", newPathProxy(nodeBase, "/infer"))
 
 	// Fallback root
 	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = io.WriteString(w, "API Gateway MVP: use /healthz, /limited, /infer/python, /infer/node\n")
+		_, _ = io.WriteString(w, "API Gateway MVP: use /healthz, /limited, /slow, /infer/python, /infer/node\n")
 	})
 
-	// ---- Rate limiter wiring (global + per-client) ----
+	// ---- Middlewares: rate-limit -> cache -> mux ----
 	rl := ratelimit.NewManagerFromEnv()
-	handler := rl.Middleware(mux)
-	// ---------------------------------------------------
+	cached := cache.NewMiddleware(cache.NewFromEnv(), "/healthz") // bypass health
+	handler := rl.Middleware(cached.Handler(mux))
+	// -------------------------------------------------
 
 	addr := ":" + port
 	log.Printf("Gateway listening on %s", port)

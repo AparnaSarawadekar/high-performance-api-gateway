@@ -42,13 +42,17 @@ services:
       PORT: 8080
       RATE_LIMIT_ENABLED: "true"  # toggle limiter on/off
       # Global limiter (whole gateway)
-      GLOBAL_RPS: "200"           # tokens added per second
-      GLOBAL_BURST: "100"         # bucket capacity for short bursts
+      GLOBAL_RPS: "1000"           # tokens added per second
+      GLOBAL_BURST: "500"         # bucket capacity for short bursts
       # Per-client limiter (by client IP / X-Forwarded-For)
-      CLIENT_RPS: "20"
-      CLIENT_BURST: "40"
+      CLIENT_RPS: "10000"
+      CLIENT_BURST: "10000"
       # Cleanup idle client buckets (minutes)
       RL_CLEANUP_MINUTES: "10"
+      CACHE_ENABLED: "true"
+      CACHE_TTL_SECONDS: "30"     # default TTL for cacheable responses
+      CACHE_MAX_ENTRIES: "10000"  # soft cap; simple map with GC
+      CACHE_MAX_BODY_BYTES: "1048576"  # 1 MiB; skip caching larger bodies
     ports:
       - "${GATEWAY_PORT:-8080}:8080"
     depends_on:

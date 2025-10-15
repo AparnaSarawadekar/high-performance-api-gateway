@@ -1,7 +1,7 @@
 [![CI](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml)
 
 # High-Performance API Gateway for AI Workloads
-*Go | Python | Node.js | Docker | Kubernetes | Azure*git status
+*Go | Python | Node.js | Docker | Kubernetes | Azure*
 
 
 > A distributed API gateway prototype optimized for **AI inference traffic** — demonstrating scalable routing, caching, throttling, and observability patterns.
@@ -121,7 +121,7 @@ curl -fsS -X POST http://localhost:8080/infer/node \
 docker compose down -v
 ```
 
-### ✅ CI Status Badge
+### CI Status Badge
 [![CI](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/AparnaSarawadekar/high-performance-api-gateway/actions/workflows/ci.yml)
 
 ---
@@ -133,7 +133,14 @@ docker compose down -v
 │   ├── main.go
 │   ├── Dockerfile
 │   ├── main_test.go
-│   └── go.mod
+│   ├── go.mod
+│   └── internal/
+        ├── cache/
+            ├── middleware.go
+            └── store.go
+        └── ratelimit/
+            ├── bucket.go
+            └── manager.go
 ├── service-python/        # FastAPI service
 │   ├── app.py
 │   ├── Dockerfile
@@ -146,11 +153,25 @@ docker compose down -v
 │   └── package.json
 ├── tests/
 │   └── load/              # k6 scripts (baseline & perf)
+│       ├── check_console.txt
+│       ├── check_summary.json
+│       ├── cache_test.js
+│       ├── k6_baseline.js
+│       ├── k6_check.js
+│       ├── k6_smoke_external.js
+│       ├── k6_smoke_min.js
+│       ├── rate_limit_test.js
+│       ├── smoke_min_console.txt
+│       ├── smoke_min_summary.json
+│       ├── baseline_summary.json
+│       └── baseline_console.txt
 ├── docs/                  # Setup, containerization, metrics
 │   ├── Containerization.md
 │   ├── Local-Tooling-Status.md
 │   ├── Perf_Baseline.md
 │   └── Scope-and-Metrics.md
+├── tools/
+│   └── k6_summary_to_md.py
 ├── docker-compose.yml
 ├── Makefile
 └── .github/workflows/ci.yml
@@ -325,7 +346,7 @@ Implement **token-bucket-based throttling** with both global and per-client (IP-
 
 ---
 
-### 🔧 Implementation Details
+### Implementation Details
 
 - Added Go middleware (`internal/ratelimit/`) implementing the **token-bucket algorithm**.
 - Supports **global** and **per-client** buckets (identified via `X-Forwarded-For` or client IP).
@@ -353,7 +374,7 @@ Implement **token-bucket-based throttling** with both global and per-client (IP-
 jot 200 | xargs -n1 -P20 -I{} curl -s -o /dev/null -w "%{http_code}\n" \
 http://localhost:8080/limited | sort | uniq -c
 ```
-Expect a mix of `200` and `429` responses — confirming throttling is active ✅
+Expect a mix of `200` and `429` responses — confirming throttling is active.
 
 #### Automated Load Test (k6)
 ```bash
@@ -384,6 +405,50 @@ http_req_duration p95 ≈ 10 ms
 
 ---
 
+## Step 11 — In-Memory Caching (GET + TTL)
+
+**Goal:** Reduce latency and backend load for idempotent GET requests by introducing an in-memory cache in the gateway.
+
+### Implementation
+- Added `internal/cache/` middleware:
+  - Caches **GET/HEAD** requests only
+  - Skips `/healthz`, requests with `Authorization`, or `Cache-Control: no-store`
+  - Stores `200 OK` responses up to `CACHE_MAX_BODY_BYTES`
+  - Adds `X-Cache: HIT|MISS` and `Age` headers on responses
+- Integrated middleware after rate limiter:
+  ```
+  rate-limit → cache → mux
+  ```
+- Configurable via environment variables in `docker-compose.yml`:
+  ```yaml
+  CACHE_ENABLED: "true"
+  CACHE_TTL_SECONDS: "30"
+  CACHE_MAX_ENTRIES: "10000"
+  CACHE_MAX_BODY_BYTES: "1048576"
+  ```
+
+### Validation
+**Manual test:**
+```bash
+curl -i http://localhost:8080/slow   # MISS (~120 ms)
+curl -i http://localhost:8080/slow   # HIT  (few ms)
+```
+
+**Automated k6 load test:**
+```bash
+k6 run tests/load/cache_test.js
+```
+Example output:
+```
+✓ status 200
+✓ has X-Cache
+http_req_duration p95 ≈ 7 ms
+```
+
+**Step 11 complete** — cache live, configurable TTL, and verified under load.
+
+---
+
 ## 🧾 Progress Summary (Completed Steps 1 – 8)
 
 | Step | Description | Status |
@@ -397,10 +462,12 @@ http_req_duration p95 ≈ 10 ms
 | 7 | Implement gateway MVP (routing + health) | ✅ |
 | 8 | Add GitHub Actions CI (pipeline) | ✅ |
 | 9 | Baseline Load Test (k6) | ✅ |
+| 10 | Add Rate Limiting & Throttling  | ✅ |
+| 11 | In-Memory Caching (GET + TTL)  | ✅ |
 
 ---
 
-Next → **Step 11 — Add in-memory caching (idempotent GETs + TTL)**
+Next → **Step 12 — Compare to baseline by rerunning load test**
 
 ---
 
