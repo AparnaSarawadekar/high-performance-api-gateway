@@ -422,7 +422,7 @@ http_req_duration p95 ≈ 10 ms
 - Configurable via environment variables in `docker-compose.yml`:
   ```yaml
   CACHE_ENABLED: "true"
-  CACHE_TTL_SECONDS: "30"
+  CACHE_TTL_SECONDS: "300"
   CACHE_MAX_ENTRIES: "10000"
   CACHE_MAX_BODY_BYTES: "1048576"
   ```
@@ -584,6 +584,68 @@ In higher-load or unbounded scenarios, this improvement translates directly into
 
 ---
 
+### Step 13 — Add Redis Cache (Docker) + Expose Hit/Miss Metrics
+
+**Goal:**  
+Enable a distributed cache backend using **Redis** (running in Docker) to persist cached GET/HEAD responses across gateway restarts and expose live cache metrics.
+
+**Changes Implemented**
+- Added `redis` service in `docker-compose.yml`
+- Introduced new gateway environment variables:
+  - `CACHE_BACKEND=redis`
+  - `REDIS_ADDR=redis:6379`
+  - `REDIS_DB=0`
+  - `REDIS_PASSWORD=`
+- Added new Go files under `internal/cache/`:
+  - `redis_store.go` – Redis client + serialization
+  - `factory.go` – backend selector (Redis vs Memory)
+  - `metrics.go` – hit/miss counters + `/cachez` snapshot
+  - `types.go` – shared cache interface
+- Middleware now emits `X-Cache: HIT|MISS` headers and increments counters.
+- Added `/cachez` endpoint returning metrics such as:
+  {
+    "hits": 1,
+    "misses": 1,
+    "hit_ratio": 0.5,
+    "backend": "redis",
+    "ttl": "30s"
+  }
+
+---
+
+### How to Verify
+
+# rebuild & start containers
+docker compose up -d --build
+
+# warm twice — expect MISS then HIT
+curl -s -D - http://localhost:8080/slow -o /dev/null | grep -i '^X-Cache:'
+curl -s -D - http://localhost:8080/slow -o /dev/null | grep -i '^X-Cache:'
+
+# metrics
+curl -s http://localhost:8080/cachez | jq .
+
+# inspect Redis keys and TTL
+REDIS=$(docker ps --format '{{.Names}}' | grep redis)
+docker exec -i "$REDIS" redis-cli --scan --pattern 'gw:v1:*' | head
+KEY=$(docker exec -i "$REDIS" redis-cli --scan --pattern 'gw:v1:*' | head -n1)
+docker exec -i "$REDIS" redis-cli TTL "$KEY"
+
+---
+
+### Expected Result
+- First call → `X-Cache: MISS`  
+- Second call → `X-Cache: HIT`  
+- `/cachez` shows hits, misses, and ratio  
+- Redis contains cached key(s) with positive TTL  
+- Metrics update correctly as new requests hit cache
+
+---
+
+**Step 13 complete — Redis cache backend operational with live metrics.**
+
+---
+
 ## 🧾 Progress Summary (Completed Steps 1 – 8)
 
 | Step | Description | Status |
@@ -600,10 +662,11 @@ In higher-load or unbounded scenarios, this improvement translates directly into
 | 10 | Add Rate Limiting & Throttling  | ✅ |
 | 11 | In-Memory Caching (GET + TTL)  | ✅ |
 | 12 | Compare to baseline by rerunning load test  | ✅ |
+| 13 | Redis cache backend operational with live metrics  | ✅ |
 
 ---
 
-Next → **Step 13 — Add Redis cache (Docker), expose hit/miss metrics**
+Next → **Step 14: Re-run Load Test & Capture PerfReport_v2 (compare baseline vs Redis)**
 
 ---
 

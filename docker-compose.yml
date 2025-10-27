@@ -50,19 +50,37 @@ services:
       # Cleanup idle client buckets (minutes)
       RL_CLEANUP_MINUTES: "10"
       CACHE_ENABLED: "true"
-      CACHE_TTL_SECONDS: "30"     # default TTL for cacheable responses
+      CACHE_TTL_SECONDS: "300"     # default TTL for cacheable responses
       CACHE_MAX_ENTRIES: "10000"  # soft cap; simple map with GC
       CACHE_MAX_BODY_BYTES: "1048576"  # 1 MiB; skip caching larger bodies
-    ports:
-      - "${GATEWAY_PORT:-8080}:8080"
+      CACHE_BACKEND: redis
+      REDIS_ADDR: redis:6379
+      REDIS_DB: "0"
+      REDIS_PASSWORD:
     depends_on:
       service-python:
         condition: service_started
       service-node:
         condition: service_started
+      redis:
+        condition: service_healthy
+    ports:
+      - "${GATEWAY_PORT:-8080}:8080"
     restart: unless-stopped
-    networks:
-      - hpag-net
+    networks: [hpag-net]
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server","--save","", "--appendonly","no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+    restart: unless-stopped
+    networks: [hpag-net]
 
 networks:
   hpag-net:

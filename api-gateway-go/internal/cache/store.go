@@ -51,13 +51,13 @@ func getenvBool(key string, def bool) bool {
 	}
 }
 
-func NewFromEnv() *Store {
-	return New(
-		getenvBool("CACHE_ENABLED", true),
-		time.Duration(getenvInt("CACHE_TTL_SECONDS", 30))*time.Second,
-		getenvInt("CACHE_MAX_ENTRIES", 10000),
-		getenvInt("CACHE_MAX_BODY_BYTES", 1<<20), // 1MiB
-	)
+func NewMemoryStoreFromEnv() *Store {
+    return New(
+        getenvBool("CACHE_ENABLED", true),
+        time.Duration(getenvInt("CACHE_TTL_SECONDS", 30))*time.Second,
+        getenvInt("CACHE_MAX_ENTRIES", 10000),
+        getenvInt("CACHE_MAX_BODY_BYTES", 1<<20), // 1MiB
+    )
 }
 
 func New(enabled bool, ttl time.Duration, maxN, maxBytes int) *Store {
@@ -156,4 +156,16 @@ func (s *Store) gc() {
 		}
 	}
 	s.mu.Unlock()
+}
+
+func (s *Store) Enabled() bool {
+	return s.enabled
+}
+
+func (s *Store) TTL() time.Duration {
+	return s.ttl
+}
+
+func (s *Store) MaxBytes() int {
+	return s.maxBytes
 }

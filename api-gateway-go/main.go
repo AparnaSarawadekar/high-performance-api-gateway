@@ -88,24 +88,33 @@ func main() {
 		_, _ = w.Write([]byte(`{"ok":true,"path":"/slow"}`))
 	})
 
-	// Inference routes (rate-limited; cacheable later if you add GETs)
-	mux.HandleFunc("/infer/python", newPathProxy(pyBase, "/infer"))
-	mux.HandleFunc("/infer/node", newPathProxy(nodeBase, "/infer"))
+	mux.HandleFunc("/cachez", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        ttl := os.Getenv("CACHE_TTL_SECONDS")
+        if ttl == "" { ttl = "30" }
+        backend := os.Getenv("CACHE_BACKEND")
+        if backend == "" { backend = "memory" }
+        _ = json.NewEncoder(w).Encode(cache.Snapshot(backend, ttl+"s"))
+    })
 
-	// Fallback root
-	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = io.WriteString(w, "API Gateway MVP: use /healthz, /limited, /slow, /infer/python, /infer/node\n")
-	})
+    // Inference routes (rate-limited; cacheable later if you add GETs)
+    mux.HandleFunc("/infer/python", newPathProxy(pyBase, "/infer"))
+    mux.HandleFunc("/infer/node", newPathProxy(nodeBase, "/infer"))
 
-	// ---- Middlewares: rate-limit -> cache -> mux ----
-	rl := ratelimit.NewManagerFromEnv()
-	cached := cache.NewMiddleware(cache.NewFromEnv(), "/healthz") // bypass health
-	handler := rl.Middleware(cached.Handler(mux))
-	// -------------------------------------------------
+    // Fallback root
+    mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+        _, _ = io.WriteString(w, "API Gateway MVP: use /healthz, /limited, /slow, /infer/python, /infer/node\n")
+    })
 
-	addr := ":" + port
-	log.Printf("Gateway listening on %s", port)
-	if err := http.ListenAndServe(addr, handler); err != nil {
-		log.Fatal(err)
-	}
+    // ---- Middlewares: rate-limit -> cache -> mux ----
+    rl := ratelimit.NewManagerFromEnv()
+    cached := cache.NewMiddleware(cache.NewFromEnv(), "/healthz", "/cachez") // bypass health + metrics
+    handler := rl.Middleware(cached.Handler(mux))
+    // -------------------------------------------------
+
+    addr := ":" + port
+    log.Printf("Gateway listening on %s", addr)
+    if err := http.ListenAndServe(addr, handler); err != nil {
+        log.Fatal(err)
+    }
 }

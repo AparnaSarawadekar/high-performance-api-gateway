@@ -6,655 +6,101 @@
  / __________ \  |_|\_\  \_____/ 
 
      execution: local
-        script: tests/load/k6_baseline.js
+        script: tests/load/cache_test.js
         output: -
 
-     scenarios: (100.00%) 2 scenarios, 400 max VUs, 3m0s max duration (incl. graceful stop):
-              * warmup: 50.00 iterations/s for 30s (maxVUs: 50-100, gracefulStop: 30s)
-              * baseline: 150.00 iterations/s for 2m0s (maxVUs: 200-300, startTime: 30s, gracefulStop: 30s)
+     scenarios: (100.00%) 1 scenario, 40 max VUs, 50s max duration (incl. graceful stop):
+              * default: 40 looping VUs for 20s (gracefulStop: 30s)
 
 
-running (0m01.0s), 001/250 VUs, 49 complete and 0 interrupted iterations
-warmup     [   3% ] 001/050 VUs  01.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      29.0s     
+running (01.0s), 40/40 VUs, 600 complete and 0 interrupted iterations
+default   [   5% ] 40 VUs  01.0s/20s
 
-running (0m02.0s), 001/250 VUs, 99 complete and 0 interrupted iterations
-warmup     [   7% ] 001/050 VUs  02.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      28.0s     
+running (02.0s), 40/40 VUs, 1320 complete and 0 interrupted iterations
+default   [  10% ] 40 VUs  02.0s/20s
 
-running (0m03.0s), 001/250 VUs, 149 complete and 0 interrupted iterations
-warmup     [  10% ] 001/050 VUs  03.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      27.0s     
+running (03.0s), 40/40 VUs, 2014 complete and 0 interrupted iterations
+default   [  15% ] 40 VUs  03.0s/20s
 
-running (0m04.0s), 001/250 VUs, 199 complete and 0 interrupted iterations
-warmup     [  13% ] 001/050 VUs  04.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      26.0s     
+running (04.0s), 40/40 VUs, 2720 complete and 0 interrupted iterations
+default   [  20% ] 40 VUs  04.0s/20s
 
-running (0m05.0s), 001/250 VUs, 249 complete and 0 interrupted iterations
-warmup     [  17% ] 001/050 VUs  05.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      25.0s     
+running (05.0s), 40/40 VUs, 3480 complete and 0 interrupted iterations
+default   [  25% ] 40 VUs  05.0s/20s
 
-running (0m06.0s), 001/250 VUs, 299 complete and 0 interrupted iterations
-warmup     [  20% ] 001/050 VUs  06.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      24.0s     
+running (06.0s), 40/40 VUs, 4160 complete and 0 interrupted iterations
+default   [  30% ] 40 VUs  06.0s/20s
 
-running (0m07.0s), 001/250 VUs, 349 complete and 0 interrupted iterations
-warmup     [  23% ] 001/050 VUs  07.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      23.0s     
+running (07.0s), 40/40 VUs, 4884 complete and 0 interrupted iterations
+default   [  35% ] 40 VUs  07.0s/20s
 
-running (0m08.0s), 001/250 VUs, 399 complete and 0 interrupted iterations
-warmup     [  27% ] 001/050 VUs  08.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      22.0s     
+running (08.0s), 40/40 VUs, 5604 complete and 0 interrupted iterations
+default   [  40% ] 40 VUs  08.0s/20s
 
-running (0m09.0s), 001/250 VUs, 449 complete and 0 interrupted iterations
-warmup     [  30% ] 001/050 VUs  09.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      21.0s     
+running (09.0s), 40/40 VUs, 6324 complete and 0 interrupted iterations
+default   [  45% ] 40 VUs  09.0s/20s
 
-running (0m10.0s), 001/250 VUs, 499 complete and 0 interrupted iterations
-warmup     [  33% ] 001/050 VUs  10.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      20.0s     
+running (10.0s), 40/40 VUs, 7044 complete and 0 interrupted iterations
+default   [  50% ] 40 VUs  10.0s/20s
 
-running (0m11.0s), 001/250 VUs, 549 complete and 0 interrupted iterations
-warmup     [  37% ] 001/050 VUs  11.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      19.0s     
+running (11.0s), 40/40 VUs, 7764 complete and 0 interrupted iterations
+default   [  55% ] 40 VUs  11.0s/20s
 
-running (0m12.0s), 001/250 VUs, 599 complete and 0 interrupted iterations
-warmup     [  40% ] 001/050 VUs  12.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      18.0s     
+running (12.0s), 40/40 VUs, 8484 complete and 0 interrupted iterations
+default   [  60% ] 40 VUs  12.0s/20s
 
-running (0m13.0s), 001/250 VUs, 649 complete and 0 interrupted iterations
-warmup     [  43% ] 001/050 VUs  13.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      17.0s     
+running (13.0s), 40/40 VUs, 9204 complete and 0 interrupted iterations
+default   [  65% ] 40 VUs  13.0s/20s
 
-running (0m14.0s), 001/250 VUs, 699 complete and 0 interrupted iterations
-warmup     [  47% ] 001/050 VUs  14.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      16.0s     
+running (14.0s), 40/40 VUs, 9924 complete and 0 interrupted iterations
+default   [  70% ] 40 VUs  14.0s/20s
 
-running (0m15.0s), 001/250 VUs, 749 complete and 0 interrupted iterations
-warmup     [  50% ] 001/050 VUs  15.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      15.0s     
+running (15.0s), 40/40 VUs, 10604 complete and 0 interrupted iterations
+default   [  75% ] 40 VUs  15.0s/20s
 
-running (0m16.0s), 001/250 VUs, 799 complete and 0 interrupted iterations
-warmup     [  53% ] 001/050 VUs  16.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      14.0s     
+running (16.0s), 40/40 VUs, 11324 complete and 0 interrupted iterations
+default   [  80% ] 40 VUs  16.0s/20s
 
-running (0m17.0s), 001/250 VUs, 849 complete and 0 interrupted iterations
-warmup     [  57% ] 001/050 VUs  17.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      13.0s     
+running (17.0s), 40/40 VUs, 12051 complete and 0 interrupted iterations
+default   [  85% ] 40 VUs  17.0s/20s
 
-running (0m18.0s), 001/250 VUs, 899 complete and 0 interrupted iterations
-warmup     [  60% ] 001/050 VUs  18.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      12.0s     
+running (18.0s), 40/40 VUs, 12811 complete and 0 interrupted iterations
+default   [  90% ] 40 VUs  18.0s/20s
 
-running (0m19.0s), 001/250 VUs, 949 complete and 0 interrupted iterations
-warmup     [  63% ] 001/050 VUs  19.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      11.0s     
+running (19.0s), 40/40 VUs, 13531 complete and 0 interrupted iterations
+default   [  95% ] 40 VUs  19.0s/20s
 
-running (0m20.0s), 001/250 VUs, 999 complete and 0 interrupted iterations
-warmup     [  67% ] 001/050 VUs  20.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      10.0s     
-
-running (0m21.0s), 001/250 VUs, 1049 complete and 0 interrupted iterations
-warmup     [  70% ] 001/050 VUs  21.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      09.0s     
-
-running (0m22.0s), 001/250 VUs, 1099 complete and 0 interrupted iterations
-warmup     [  73% ] 001/050 VUs  22.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      08.0s     
-
-running (0m23.0s), 001/250 VUs, 1149 complete and 0 interrupted iterations
-warmup     [  77% ] 001/050 VUs  23.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      07.0s     
-
-running (0m24.0s), 001/250 VUs, 1199 complete and 0 interrupted iterations
-warmup     [  80% ] 001/050 VUs  24.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      06.0s     
-
-running (0m25.0s), 001/250 VUs, 1249 complete and 0 interrupted iterations
-warmup     [  83% ] 001/050 VUs  25.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      05.0s     
-
-running (0m26.0s), 001/250 VUs, 1299 complete and 0 interrupted iterations
-warmup     [  87% ] 001/050 VUs  26.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      04.0s     
-
-running (0m27.0s), 001/250 VUs, 1349 complete and 0 interrupted iterations
-warmup     [  90% ] 001/050 VUs  27.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      03.0s     
-
-running (0m28.0s), 001/250 VUs, 1399 complete and 0 interrupted iterations
-warmup     [  93% ] 001/050 VUs  28.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      02.0s     
-
-running (0m29.0s), 001/250 VUs, 1449 complete and 0 interrupted iterations
-warmup     [  97% ] 001/050 VUs  29.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      01.0s     
-
-running (0m30.0s), 001/250 VUs, 1499 complete and 0 interrupted iterations
-warmup     [ 100% ] 001/050 VUs  30.0s/30s  50.00 iters/s
-baseline • [   0% ] waiting      00.0s     
-
-running (0m31.0s), 002/250 VUs, 1647 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   1% ] 002/200 VUs  0m01.0s/2m0s  150.00 iters/s
-
-running (0m32.0s), 001/250 VUs, 1798 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   2% ] 001/200 VUs  0m02.0s/2m0s  150.00 iters/s
-
-running (0m33.0s), 001/250 VUs, 1948 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   2% ] 001/200 VUs  0m03.0s/2m0s  150.00 iters/s
-
-running (0m34.0s), 001/250 VUs, 2098 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   3% ] 001/200 VUs  0m04.0s/2m0s  150.00 iters/s
-
-running (0m35.0s), 001/250 VUs, 2248 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   4% ] 001/200 VUs  0m05.0s/2m0s  150.00 iters/s
-
-running (0m36.0s), 001/250 VUs, 2398 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   5% ] 001/200 VUs  0m06.0s/2m0s  150.00 iters/s
-
-running (0m37.0s), 001/250 VUs, 2548 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   6% ] 001/200 VUs  0m07.0s/2m0s  150.00 iters/s
-
-running (0m38.0s), 001/250 VUs, 2698 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   7% ] 001/200 VUs  0m08.0s/2m0s  150.00 iters/s
-
-running (0m39.0s), 001/250 VUs, 2848 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   7% ] 001/200 VUs  0m09.0s/2m0s  150.00 iters/s
-
-running (0m40.0s), 001/250 VUs, 2998 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   8% ] 001/200 VUs  0m10.0s/2m0s  150.00 iters/s
-
-running (0m41.0s), 001/250 VUs, 3148 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [   9% ] 001/200 VUs  0m11.0s/2m0s  150.00 iters/s
-
-running (0m42.0s), 001/250 VUs, 3298 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  10% ] 001/200 VUs  0m12.0s/2m0s  150.00 iters/s
-
-running (0m43.0s), 001/250 VUs, 3448 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  11% ] 001/200 VUs  0m13.0s/2m0s  150.00 iters/s
-
-running (0m44.0s), 001/250 VUs, 3598 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  12% ] 001/200 VUs  0m14.0s/2m0s  150.00 iters/s
-
-running (0m45.0s), 001/250 VUs, 3748 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  12% ] 001/200 VUs  0m15.0s/2m0s  150.00 iters/s
-
-running (0m46.0s), 001/250 VUs, 3898 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  13% ] 001/200 VUs  0m16.0s/2m0s  150.00 iters/s
-
-running (0m47.0s), 001/250 VUs, 4048 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  14% ] 001/200 VUs  0m17.0s/2m0s  150.00 iters/s
-
-running (0m48.0s), 001/250 VUs, 4198 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  15% ] 001/200 VUs  0m18.0s/2m0s  150.00 iters/s
-
-running (0m49.0s), 001/250 VUs, 4348 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  16% ] 001/200 VUs  0m19.0s/2m0s  150.00 iters/s
-
-running (0m50.0s), 001/250 VUs, 4498 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  17% ] 001/200 VUs  0m20.0s/2m0s  150.00 iters/s
-
-running (0m51.0s), 001/250 VUs, 4648 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  17% ] 001/200 VUs  0m21.0s/2m0s  150.00 iters/s
-
-running (0m52.0s), 001/250 VUs, 4798 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  18% ] 001/200 VUs  0m22.0s/2m0s  150.00 iters/s
-
-running (0m53.0s), 001/250 VUs, 4948 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  19% ] 001/200 VUs  0m23.0s/2m0s  150.00 iters/s
-
-running (0m54.0s), 001/250 VUs, 5098 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  20% ] 001/200 VUs  0m24.0s/2m0s  150.00 iters/s
-
-running (0m55.0s), 001/250 VUs, 5248 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  21% ] 001/200 VUs  0m25.0s/2m0s  150.00 iters/s
-
-running (0m56.0s), 001/250 VUs, 5398 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  22% ] 001/200 VUs  0m26.0s/2m0s  150.00 iters/s
-
-running (0m57.0s), 003/250 VUs, 5547 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  22% ] 003/200 VUs  0m27.0s/2m0s  150.00 iters/s
-
-running (0m58.0s), 001/250 VUs, 5698 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  23% ] 001/200 VUs  0m28.0s/2m0s  150.00 iters/s
-
-running (0m59.0s), 001/250 VUs, 5848 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  24% ] 001/200 VUs  0m29.0s/2m0s  150.00 iters/s
-
-running (1m00.0s), 001/250 VUs, 5998 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  25% ] 001/200 VUs  0m30.0s/2m0s  150.00 iters/s
-
-running (1m01.0s), 001/250 VUs, 6148 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  26% ] 001/200 VUs  0m31.0s/2m0s  150.00 iters/s
-
-running (1m02.0s), 002/250 VUs, 6298 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  27% ] 002/200 VUs  0m32.0s/2m0s  150.00 iters/s
-
-running (1m03.0s), 001/250 VUs, 6448 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  27% ] 001/200 VUs  0m33.0s/2m0s  150.00 iters/s
-
-running (1m04.0s), 001/250 VUs, 6598 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  28% ] 001/200 VUs  0m34.0s/2m0s  150.00 iters/s
-
-running (1m05.0s), 001/250 VUs, 6748 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  29% ] 001/200 VUs  0m35.0s/2m0s  150.00 iters/s
-
-running (1m06.0s), 001/250 VUs, 6898 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  30% ] 001/200 VUs  0m36.0s/2m0s  150.00 iters/s
-
-running (1m07.0s), 001/250 VUs, 7048 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  31% ] 001/200 VUs  0m37.0s/2m0s  150.00 iters/s
-
-running (1m08.0s), 001/250 VUs, 7198 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  32% ] 001/200 VUs  0m38.0s/2m0s  150.00 iters/s
-
-running (1m09.0s), 001/250 VUs, 7348 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  32% ] 001/200 VUs  0m39.0s/2m0s  150.00 iters/s
-
-running (1m10.0s), 001/250 VUs, 7498 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  33% ] 001/200 VUs  0m40.0s/2m0s  150.00 iters/s
-
-running (1m11.0s), 001/250 VUs, 7648 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  34% ] 001/200 VUs  0m41.0s/2m0s  150.00 iters/s
-
-running (1m12.0s), 001/250 VUs, 7798 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  35% ] 001/200 VUs  0m42.0s/2m0s  150.00 iters/s
-
-running (1m13.0s), 001/250 VUs, 7948 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  36% ] 001/200 VUs  0m43.0s/2m0s  150.00 iters/s
-
-running (1m14.0s), 001/250 VUs, 8098 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  37% ] 001/200 VUs  0m44.0s/2m0s  150.00 iters/s
-
-running (1m15.0s), 001/250 VUs, 8248 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  37% ] 001/200 VUs  0m45.0s/2m0s  150.00 iters/s
-
-running (1m16.0s), 001/250 VUs, 8398 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  38% ] 001/200 VUs  0m46.0s/2m0s  150.00 iters/s
-
-running (1m17.0s), 001/250 VUs, 8548 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  39% ] 001/200 VUs  0m47.0s/2m0s  150.00 iters/s
-
-running (1m18.0s), 001/250 VUs, 8698 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  40% ] 001/200 VUs  0m48.0s/2m0s  150.00 iters/s
-
-running (1m19.0s), 001/250 VUs, 8848 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  41% ] 001/200 VUs  0m49.0s/2m0s  150.00 iters/s
-
-running (1m20.0s), 001/250 VUs, 8998 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  42% ] 001/200 VUs  0m50.0s/2m0s  150.00 iters/s
-
-running (1m21.0s), 001/250 VUs, 9148 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  42% ] 001/200 VUs  0m51.0s/2m0s  150.00 iters/s
-
-running (1m22.0s), 001/250 VUs, 9298 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  43% ] 001/200 VUs  0m52.0s/2m0s  150.00 iters/s
-
-running (1m23.0s), 001/250 VUs, 9448 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  44% ] 001/200 VUs  0m53.0s/2m0s  150.00 iters/s
-
-running (1m24.0s), 001/250 VUs, 9598 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  45% ] 001/200 VUs  0m54.0s/2m0s  150.00 iters/s
-
-running (1m25.0s), 001/250 VUs, 9748 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  46% ] 001/200 VUs  0m55.0s/2m0s  150.00 iters/s
-
-running (1m26.0s), 001/250 VUs, 9898 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  47% ] 001/200 VUs  0m56.0s/2m0s  150.00 iters/s
-
-running (1m27.0s), 001/250 VUs, 10048 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  47% ] 001/200 VUs  0m57.0s/2m0s  150.00 iters/s
-
-running (1m28.0s), 001/250 VUs, 10198 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  48% ] 001/200 VUs  0m58.0s/2m0s  150.00 iters/s
-
-running (1m29.0s), 001/250 VUs, 10348 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  49% ] 001/200 VUs  0m59.0s/2m0s  150.00 iters/s
-
-running (1m30.0s), 001/250 VUs, 10498 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  50% ] 001/200 VUs  1m00.0s/2m0s  150.00 iters/s
-
-running (1m31.0s), 001/250 VUs, 10648 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  51% ] 001/200 VUs  1m01.0s/2m0s  150.00 iters/s
-
-running (1m32.0s), 001/250 VUs, 10798 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  52% ] 001/200 VUs  1m02.0s/2m0s  150.00 iters/s
-
-running (1m33.0s), 001/250 VUs, 10948 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  52% ] 001/200 VUs  1m03.0s/2m0s  150.00 iters/s
-
-running (1m34.0s), 001/250 VUs, 11098 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  53% ] 001/200 VUs  1m04.0s/2m0s  150.00 iters/s
-
-running (1m35.0s), 001/250 VUs, 11248 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  54% ] 001/200 VUs  1m05.0s/2m0s  150.00 iters/s
-
-running (1m36.0s), 001/250 VUs, 11398 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  55% ] 001/200 VUs  1m06.0s/2m0s  150.00 iters/s
-
-running (1m37.0s), 001/250 VUs, 11548 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  56% ] 001/200 VUs  1m07.0s/2m0s  150.00 iters/s
-
-running (1m38.0s), 001/250 VUs, 11698 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  57% ] 001/200 VUs  1m08.0s/2m0s  150.00 iters/s
-
-running (1m39.0s), 001/250 VUs, 11848 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  57% ] 001/200 VUs  1m09.0s/2m0s  150.00 iters/s
-
-running (1m40.0s), 001/250 VUs, 11998 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  58% ] 001/200 VUs  1m10.0s/2m0s  150.00 iters/s
-
-running (1m41.0s), 001/250 VUs, 12148 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  59% ] 001/200 VUs  1m11.0s/2m0s  150.00 iters/s
-
-running (1m42.0s), 001/250 VUs, 12298 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  60% ] 001/200 VUs  1m12.0s/2m0s  150.00 iters/s
-
-running (1m43.0s), 001/250 VUs, 12448 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  61% ] 001/200 VUs  1m13.0s/2m0s  150.00 iters/s
-
-running (1m44.0s), 001/250 VUs, 12598 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  62% ] 001/200 VUs  1m14.0s/2m0s  150.00 iters/s
-
-running (1m45.0s), 001/250 VUs, 12748 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  62% ] 001/200 VUs  1m15.0s/2m0s  150.00 iters/s
-
-running (1m46.0s), 001/250 VUs, 12898 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  63% ] 001/200 VUs  1m16.0s/2m0s  150.00 iters/s
-
-running (1m47.0s), 001/250 VUs, 13048 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  64% ] 001/200 VUs  1m17.0s/2m0s  150.00 iters/s
-
-running (1m48.0s), 001/250 VUs, 13198 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  65% ] 001/200 VUs  1m18.0s/2m0s  150.00 iters/s
-
-running (1m49.0s), 001/250 VUs, 13348 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  66% ] 001/200 VUs  1m19.0s/2m0s  150.00 iters/s
-
-running (1m50.0s), 001/250 VUs, 13498 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  67% ] 001/200 VUs  1m20.0s/2m0s  150.00 iters/s
-
-running (1m51.0s), 001/250 VUs, 13648 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  67% ] 001/200 VUs  1m21.0s/2m0s  150.00 iters/s
-
-running (1m52.0s), 001/250 VUs, 13798 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  68% ] 001/200 VUs  1m22.0s/2m0s  150.00 iters/s
-
-running (1m53.0s), 001/250 VUs, 13948 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  69% ] 001/200 VUs  1m23.0s/2m0s  150.00 iters/s
-
-running (1m54.0s), 001/250 VUs, 14098 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  70% ] 001/200 VUs  1m24.0s/2m0s  150.00 iters/s
-
-running (1m55.0s), 001/250 VUs, 14248 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  71% ] 001/200 VUs  1m25.0s/2m0s  150.00 iters/s
-
-running (1m56.0s), 001/250 VUs, 14398 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  72% ] 001/200 VUs  1m26.0s/2m0s  150.00 iters/s
-
-running (1m57.0s), 001/250 VUs, 14548 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  72% ] 001/200 VUs  1m27.0s/2m0s  150.00 iters/s
-
-running (1m58.0s), 001/250 VUs, 14698 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  73% ] 001/200 VUs  1m28.0s/2m0s  150.00 iters/s
-
-running (1m59.0s), 001/250 VUs, 14848 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  74% ] 001/200 VUs  1m29.0s/2m0s  150.00 iters/s
-
-running (2m00.0s), 001/250 VUs, 14998 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  75% ] 001/200 VUs  1m30.0s/2m0s  150.00 iters/s
-
-running (2m01.0s), 001/250 VUs, 15148 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  76% ] 001/200 VUs  1m31.0s/2m0s  150.00 iters/s
-
-running (2m02.0s), 001/250 VUs, 15298 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  77% ] 001/200 VUs  1m32.0s/2m0s  150.00 iters/s
-
-running (2m03.0s), 001/250 VUs, 15448 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  77% ] 001/200 VUs  1m33.0s/2m0s  150.00 iters/s
-
-running (2m04.0s), 001/250 VUs, 15598 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  78% ] 001/200 VUs  1m34.0s/2m0s  150.00 iters/s
-
-running (2m05.0s), 001/250 VUs, 15748 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  79% ] 001/200 VUs  1m35.0s/2m0s  150.00 iters/s
-
-running (2m06.0s), 001/250 VUs, 15898 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  80% ] 001/200 VUs  1m36.0s/2m0s  150.00 iters/s
-
-running (2m07.0s), 001/250 VUs, 16048 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  81% ] 001/200 VUs  1m37.0s/2m0s  150.00 iters/s
-
-running (2m08.0s), 001/250 VUs, 16198 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  82% ] 001/200 VUs  1m38.0s/2m0s  150.00 iters/s
-
-running (2m09.0s), 001/250 VUs, 16348 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  82% ] 001/200 VUs  1m39.0s/2m0s  150.00 iters/s
-
-running (2m10.0s), 001/250 VUs, 16498 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  83% ] 001/200 VUs  1m40.0s/2m0s  150.00 iters/s
-
-running (2m11.0s), 001/250 VUs, 16648 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  84% ] 001/200 VUs  1m41.0s/2m0s  150.00 iters/s
-
-running (2m12.0s), 001/250 VUs, 16798 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  85% ] 001/200 VUs  1m42.0s/2m0s  150.00 iters/s
-
-running (2m13.0s), 001/250 VUs, 16948 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  86% ] 001/200 VUs  1m43.0s/2m0s  150.00 iters/s
-
-running (2m14.0s), 001/250 VUs, 17098 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  87% ] 001/200 VUs  1m44.0s/2m0s  150.00 iters/s
-
-running (2m15.0s), 001/250 VUs, 17248 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  87% ] 001/200 VUs  1m45.0s/2m0s  150.00 iters/s
-
-running (2m16.0s), 001/250 VUs, 17398 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  88% ] 001/200 VUs  1m46.0s/2m0s  150.00 iters/s
-
-running (2m17.0s), 001/250 VUs, 17548 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  89% ] 001/200 VUs  1m47.0s/2m0s  150.00 iters/s
-
-running (2m18.0s), 001/250 VUs, 17698 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  90% ] 001/200 VUs  1m48.0s/2m0s  150.00 iters/s
-
-running (2m19.0s), 001/250 VUs, 17848 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  91% ] 001/200 VUs  1m49.0s/2m0s  150.00 iters/s
-
-running (2m20.0s), 001/250 VUs, 17998 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  92% ] 001/200 VUs  1m50.0s/2m0s  150.00 iters/s
-
-running (2m21.0s), 001/250 VUs, 18148 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  92% ] 001/200 VUs  1m51.0s/2m0s  150.00 iters/s
-
-running (2m22.0s), 001/250 VUs, 18298 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  93% ] 001/200 VUs  1m52.0s/2m0s  150.00 iters/s
-
-running (2m23.0s), 001/250 VUs, 18448 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  94% ] 001/200 VUs  1m53.0s/2m0s  150.00 iters/s
-
-running (2m24.0s), 001/250 VUs, 18598 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  95% ] 001/200 VUs  1m54.0s/2m0s  150.00 iters/s
-
-running (2m25.0s), 001/250 VUs, 18748 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  96% ] 001/200 VUs  1m55.0s/2m0s  150.00 iters/s
-
-running (2m26.0s), 001/250 VUs, 18898 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  97% ] 001/200 VUs  1m56.0s/2m0s  150.00 iters/s
-
-running (2m27.0s), 001/250 VUs, 19048 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  97% ] 001/200 VUs  1m57.0s/2m0s  150.00 iters/s
-
-running (2m28.0s), 001/250 VUs, 19198 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  98% ] 001/200 VUs  1m58.0s/2m0s  150.00 iters/s
-
-running (2m29.0s), 001/250 VUs, 19348 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [  99% ] 001/200 VUs  1m59.0s/2m0s  150.00 iters/s
-
-running (2m30.0s), 001/250 VUs, 19498 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s           50.00 iters/s
-baseline   [ 100% ] 001/200 VUs  2m00.0s/2m0s  150.00 iters/s
-
-
-  █ THRESHOLDS 
-
-    checks
-    ✓ 'rate>0.99' rate=100.00%
-
-    http_req_duration
-    ✓ 'p(95)<250' p(95)=1.92ms
-    ✓ 'p(99)<400' p(99)=2.6ms
-
-    http_req_failed
-    ✓ 'rate<0.01' rate=0.00%
+running (20.0s), 40/40 VUs, 14251 complete and 0 interrupted iterations
+default   [ 100% ] 40 VUs  20.0s/20s
 
 
   █ TOTAL RESULTS 
 
-    checks_total.......: 19501   130.000775/s
-    checks_succeeded...: 100.00% 19501 out of 19501
-    checks_failed......: 0.00%   0 out of 19501
+    checks_total.......: 28582   1425.625679/s
+    checks_succeeded...: 100.00% 28582 out of 28582
+    checks_failed......: 0.00%   0 out of 28582
 
     ✓ status 200
+    ✓ has X-Cache
 
     HTTP
-    http_req_duration..............: avg=1.12ms  min=238µs   med=1.02ms  max=25.91ms p(90)=1.48ms  p(95)=1.92ms 
-      { expected_response:true }...: avg=1.12ms  min=238µs   med=1.02ms  max=25.91ms p(90)=1.48ms  p(95)=1.92ms 
-    http_req_failed................: 0.00%  0 out of 19501
-    http_reqs......................: 19501  130.000775/s
+    http_req_duration..............: avg=5.36ms  min=174µs   med=5.17ms  max=135.77ms p(90)=6.72ms  p(95)=7.76ms 
+      { expected_response:true }...: avg=5.36ms  min=174µs   med=5.17ms  max=135.77ms p(90)=6.72ms  p(95)=7.76ms 
+    http_req_failed................: 0.00%  0 out of 14291
+    http_reqs......................: 14291  712.812839/s
 
     EXECUTION
-    iteration_duration.............: avg=11.74ms min=10.45ms med=11.63ms max=36.66ms p(90)=12.32ms p(95)=12.85ms
-    iterations.....................: 19501  130.000775/s
-    vus............................: 2      min=1          max=2  
-    vus_max........................: 250    min=250        max=250
+    iteration_duration.............: avg=56.08ms min=50.25ms med=55.97ms max=190.61ms p(90)=57.51ms p(95)=58.48ms
+    iterations.....................: 14291  712.812839/s
+    vus............................: 40     min=40         max=40
+    vus_max........................: 40     min=40         max=40
 
     NETWORK
-    data_received..................: 3.4 MB 23 kB/s
-    data_sent......................: 9.5 MB 64 kB/s
+    data_received..................: 2.9 MB 145 kB/s
+    data_sent......................: 1.5 MB 73 kB/s
 
 
 
 
-running (2m30.0s), 000/250 VUs, 19501 complete and 0 interrupted iterations
-warmup   ✓ [ 100% ] 000/050 VUs  30s   50.00 iters/s
-baseline ✓ [ 100% ] 000/200 VUs  2m0s  150.00 iters/s
+running (20.0s), 00/40 VUs, 14291 complete and 0 interrupted iterations
+default ✓ [ 100% ] 40 VUs  20s

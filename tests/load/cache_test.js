@@ -13,3 +13,21 @@ export default function () {
   });
   sleep(0.05);
 }
+
+// json summary
+export function handleSummary(data) {
+  const out = JSON.stringify({
+    state: {
+      testRunDurationMs: data.state?.testRunDurationMs,
+      testRunDuration: data.state?.testRunDuration, // seconds
+    },
+    metrics: data.metrics
+  }, null, 2);
+
+  const summaryPath = __ENV.K6_SUMMARY_OUT || "tests/load/perf_cached.json";
+  return {
+    [summaryPath]: json,
+    stdout: "\nSaved summary to " + summaryPath + "\n"
+  };
+}
+
