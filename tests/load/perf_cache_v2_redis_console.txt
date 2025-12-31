@@ -1,0 +1,79 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: tests/load/cache_test.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 40 max VUs, 50s max duration (incl. graceful stop):
+              * default: 40 looping VUs for 20s (gracefulStop: 30s)
+
+
+running (01.0s), 40/40 VUs, 567 complete and 0 interrupted iterations
+default   [   5% ] 40 VUs  01.0s/20s
+
+running (02.0s), 40/40 VUs, 1264 complete and 0 interrupted iterations
+default   [  10% ] 40 VUs  02.0s/20s
+
+running (03.0s), 40/40 VUs, 1980 complete and 0 interrupted iterations
+default   [  15% ] 40 VUs  03.0s/20s
+
+running (04.0s), 40/40 VUs, 2660 complete and 0 interrupted iterations
+default   [  20% ] 40 VUs  04.0s/20s
+
+running (05.0s), 40/40 VUs, 3347 complete and 0 interrupted iterations
+default   [  25% ] 40 VUs  05.0s/20s
+
+running (06.0s), 40/40 VUs, 4076 complete and 0 interrupted iterations
+default   [  30% ] 40 VUs  06.0s/20s
+
+running (07.0s), 40/40 VUs, 4768 complete and 0 interrupted iterations
+default   [  35% ] 40 VUs  07.0s/20s
+
+running (08.0s), 40/40 VUs, 5448 complete and 0 interrupted iterations
+default   [  40% ] 40 VUs  08.0s/20s
+
+running (09.0s), 40/40 VUs, 6168 complete and 0 interrupted iterations
+default   [  45% ] 40 VUs  09.0s/20s
+
+running (10.0s), 40/40 VUs, 6888 complete and 0 interrupted iterations
+default   [  50% ] 40 VUs  10.0s/20s
+
+running (11.0s), 40/40 VUs, 7577 complete and 0 interrupted iterations
+default   [  55% ] 40 VUs  11.0s/20s
+
+running (12.0s), 40/40 VUs, 8288 complete and 0 interrupted iterations
+default   [  60% ] 40 VUs  12.0s/20s
+
+running (13.0s), 40/40 VUs, 8974 complete and 0 interrupted iterations
+default   [  65% ] 40 VUs  13.0s/20s
+
+running (14.0s), 40/40 VUs, 9694 complete and 0 interrupted iterations
+default   [  70% ] 40 VUs  14.0s/20s
+
+running (15.0s), 40/40 VUs, 10377 complete and 0 interrupted iterations
+default   [  75% ] 40 VUs  15.0s/20s
+
+running (16.0s), 40/40 VUs, 11097 complete and 0 interrupted iterations
+default   [  80% ] 40 VUs  16.0s/20s
+
+running (17.0s), 40/40 VUs, 11820 complete and 0 interrupted iterations
+default   [  85% ] 40 VUs  17.0s/20s
+
+running (18.0s), 40/40 VUs, 12545 complete and 0 interrupted iterations
+default   [  90% ] 40 VUs  18.0s/20s
+
+running (19.0s), 40/40 VUs, 13265 complete and 0 interrupted iterations
+default   [  95% ] 40 VUs  19.0s/20s
+
+running (20.0s), 40/40 VUs, 13985 complete and 0 interrupted iterations
+default   [ 100% ] 40 VUs  20.0s/20s
+
+Saved summary to tests/load/perf_cache_v2_redis_summary.json
+
+running (20.0s), 00/40 VUs, 14025 complete and 0 interrupted iterations
+default ✓ [ 100% ] 40 VUs  20s

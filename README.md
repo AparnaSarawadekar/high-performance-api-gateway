@@ -584,69 +584,96 @@ In higher-load or unbounded scenarios, this improvement translates directly into
 
 ---
 
-### Step 13 — Add Redis Cache (Docker) + Expose Hit/Miss Metrics
+## Step 13 — Redis Cache Backend + Live Metrics
 
-**Goal:**  
-Enable a distributed cache backend using **Redis** (running in Docker) to persist cached GET/HEAD responses across gateway restarts and expose live cache metrics.
+Goal:
+Enable a distributed cache backend using Redis (Docker) to persist cached GET/HEAD responses and expose live cache metrics.
 
-**Changes Implemented**
-- Added `redis` service in `docker-compose.yml`
-- Introduced new gateway environment variables:
-  - `CACHE_BACKEND=redis`
-  - `REDIS_ADDR=redis:6379`
-  - `REDIS_DB=0`
-  - `REDIS_PASSWORD=`
-- Added new Go files under `internal/cache/`:
-  - `redis_store.go` – Redis client + serialization
-  - `factory.go` – backend selector (Redis vs Memory)
-  - `metrics.go` – hit/miss counters + `/cachez` snapshot
-  - `types.go` – shared cache interface
-- Middleware now emits `X-Cache: HIT|MISS` headers and increments counters.
-- Added `/cachez` endpoint returning metrics such as:
-  {
-    "hits": 1,
-    "misses": 1,
-    "hit_ratio": 0.5,
-    "backend": "redis",
-    "ttl": "30s"
-  }
+Changes Implemented:
+- Added `redis` service to `docker-compose.yml`
+- Gateway environment variables:
+  - CACHE_BACKEND=redis
+  - REDIS_ADDR=redis:6379
+  - REDIS_DB=0
+  - REDIS_PASSWORD=
+- New cache implementation files:
+  - redis_store.go — Redis client + serialization
+  - factory.go — backend selector (Redis vs Memory)
+  - metrics.go — hit/miss counters + /cachez snapshot
+  - types.go — shared cache interface
+- Middleware emits `X-Cache: HIT|MISS` headers
+- Added `/cachez` endpoint exposing cache metrics
 
----
+How to Verify (Step 13):
 
-### How to Verify
+  # rebuild & start containers
+  docker compose up -d --build
 
-# rebuild & start containers
-docker compose up -d --build
+  # warm twice — expect MISS then HIT
+  curl -s -D - http://localhost:8080/slow -o /dev/null | grep -i '^X-Cache:'
+  curl -s -D - http://localhost:8080/slow -o /dev/null | grep -i '^X-Cache:'
 
-# warm twice — expect MISS then HIT
-curl -s -D - http://localhost:8080/slow -o /dev/null | grep -i '^X-Cache:'
-curl -s -D - http://localhost:8080/slow -o /dev/null | grep -i '^X-Cache:'
+  # cache metrics
+  curl -s http://localhost:8080/cachez | jq .
 
-# metrics
-curl -s http://localhost:8080/cachez | jq .
+  # inspect Redis keys and TTL
+  REDIS=$(docker ps --format '{{.Names}}' | grep redis)
+  docker exec -i "$REDIS" redis-cli --scan --pattern 'gw:v1:*' | head
+  KEY=$(docker exec -i "$REDIS" redis-cli --scan --pattern 'gw:v1:*' | head -n1)
+  docker exec -i "$REDIS" redis-cli TTL "$KEY"
 
-# inspect Redis keys and TTL
-REDIS=$(docker ps --format '{{.Names}}' | grep redis)
-docker exec -i "$REDIS" redis-cli --scan --pattern 'gw:v1:*' | head
-KEY=$(docker exec -i "$REDIS" redis-cli --scan --pattern 'gw:v1:*' | head -n1)
-docker exec -i "$REDIS" redis-cli TTL "$KEY"
+Expected Result:
+- First request → X-Cache: MISS
+- Second request → X-Cache: HIT
+- /cachez shows hits, misses, and hit ratio
+- Redis key exists with positive TTL
 
----
-
-### Expected Result
-- First call → `X-Cache: MISS`  
-- Second call → `X-Cache: HIT`  
-- `/cachez` shows hits, misses, and ratio  
-- Redis contains cached key(s) with positive TTL  
-- Metrics update correctly as new requests hit cache
+✅ Step 13 complete — Redis cache backend operational with live metrics.
 
 ---
 
-**Step 13 complete — Redis cache backend operational with live metrics.**
+## Step 14 — PerfReport_v2 (Redis Load Test)
+
+Goal:
+Re-run the same k6 workload with Redis enabled and capture reproducible performance artifacts.
+
+Workload:
+- Script: tests/load/cache_test.js
+- VUs: 40
+- Duration: 20s
+- Target: GET /slow
+- Backend: Redis (CACHE_BACKEND=redis)
+
+Artifacts:
+- Console: tests/load/perf_cache_v2_redis_console.txt
+- Summary: tests/load/perf_cache_v2_redis_summary.json
+- Report: docs/PerfReport_CacheV2_Redis.md
+
+Run (Step 14):
+
+  K6_SUMMARY_OUT=tests/load/perf_cache_v2_redis_summary.json \
+  k6 run tests/load/cache_test.js \
+  | tee tests/load/perf_cache_v2_redis_console.txt
+
+Verify Metrics from Summary JSON:
+
+  jq -r '
+  "RPS=" + (.metrics.http_reqs.values.rate|tostring) + "\n" +
+  "p95_ms=" + (.metrics.http_req_duration.values["p(95)"]|tostring) + "\n" +
+  "error_rate=" + (.metrics.http_req_failed.values.rate|tostring)
+  ' tests/load/perf_cache_v2_redis_summary.json
+
+Expected Redis Results:
+- RPS ≈ 700 req/s
+- p95 latency ≈ 11–14 ms
+- Error rate = 0%
+
+✅ Step 14 complete — Redis load test rerun and PerfReport_v2 artifacts captured.
+
 
 ---
 
-## 🧾 Progress Summary (Completed Steps 1 – 8)
+## 🧾 Progress Summary (Completed Steps 1 – 14)
 
 | Step | Description | Status |
 |:--:|:--|:--:|
@@ -663,10 +690,11 @@ docker exec -i "$REDIS" redis-cli TTL "$KEY"
 | 11 | In-Memory Caching (GET + TTL)  | ✅ |
 | 12 | Compare to baseline by rerunning load test  | ✅ |
 | 13 | Redis cache backend operational with live metrics  | ✅ |
+| 14 | PerfReport_v2 (Redis load test + report) | ✅ |
 
 ---
 
-Next → **Step 14: Re-run Load Test & Capture PerfReport_v2 (compare baseline vs Redis)**
+Next → **Step 15: Add observability (structured logs, OpenTelemetry, Prometheus endpoints)**
 
 ---
 

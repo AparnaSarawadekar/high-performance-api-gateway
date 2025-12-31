@@ -1,6 +1,8 @@
 // tests/load/cache_test.js
 import http from "k6/http";
 import { check, sleep } from "k6";
+import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
+import { json } from 'k6/encoding';
 
 export const options = { vus: 40, duration: "20s" };
 
@@ -16,18 +18,22 @@ export default function () {
 
 // json summary
 export function handleSummary(data) {
-  const out = JSON.stringify({
-    state: {
-      testRunDurationMs: data.state?.testRunDurationMs,
-      testRunDuration: data.state?.testRunDuration, // seconds
+  const out = JSON.stringify(
+    {
+      state: {
+        testRunDurationMs: data.state?.testRunDurationMs,
+        testRunDuration: data.state?.testRunDuration,
+      },
+      metrics: data.metrics,
     },
-    metrics: data.metrics
-  }, null, 2);
+    null,
+    2
+  );
 
-  const summaryPath = __ENV.K6_SUMMARY_OUT || "tests/load/perf_cached.json";
+  const summaryPath = __ENV.K6_SUMMARY_OUT || "tests/load/perf_cache_v2_redis_summary.json";
+
   return {
-    [summaryPath]: json,
-    stdout: "\nSaved summary to " + summaryPath + "\n"
+    [summaryPath]: out, //write plain JSON string (no json() wrapper)
+    stdout: `\nSaved summary to ${summaryPath}\n`,
   };
 }
-
